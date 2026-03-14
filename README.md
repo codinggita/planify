@@ -65,8 +65,15 @@ Step 6 - feat: add task search, filter, sort and debouncing
 - Integrated real-time filtering into the `Dashboard`
 - Status: COMPLETED
 
-Step 7 - Pagination — coming next
-Step 8 - Form Validation
+Step 7 - feat: add task pagination
+- Added robust `.env` variables to backend for MongoDB Atlas connection
+- Updated Express `getTasks` controller to process `pageNumber` and `limit`, utilizing Mongoose `.skip()` and `.limit()`
+- Returned pagination metadata (`total`, `page`, `pages`) from API
+- Built reusable React `Pagination` component with previous/next and numbered page buttons
+- Wired frontend `Dashboard` state to track active page and dynamically re-fetch data on click
+- Status: COMPLETED
+
+Step 8 - Form Validation — coming next
 Step 9 - Error Handling
 Step 10 - Task Progress Tracking
 Step 11 - Drag and Drop Tasks

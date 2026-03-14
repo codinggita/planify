@@ -1,11 +1,17 @@
 import Task from '../models/Task.js'
 
-// @desc    Get all tasks for the logged in user (with search, filter, sort)
+// @desc    Get all tasks for the logged in user (with search, filter, sort, pagination)
 // @route   GET /api/tasks
 // @access  Private
 export const getTasks = async (req, res) => {
   try {
-    const { search, status, priority, sort } = req.query
+    const { search, status, priority, sort, pageNumber, limit: queryLimit } = req.query
+
+    // Pagination logic
+    const page = Number(pageNumber) || 1
+    const limit = Number(queryLimit) || 9 // Default 9 items per page
+
+    const skip = (page - 1) * limit
 
     // Base query: only tasks belonging to user
     let query = { user: req.user.id }
@@ -27,14 +33,25 @@ export const getTasks = async (req, res) => {
 
     if (sort === 'oldest') sortObj = { createdAt: 1 }
     if (sort === 'priority') {
-      // Custom priority sorting will require aggregate or client-side sorting usually.
-      // For simplicity, alphabetical sort on Priority (High -> Low -> Medium)
       sortObj = { priority: 1, createdAt: -1 } 
     }
     if (sort === 'dueDate') sortObj = { dueDate: 1, createdAt: -1 }
 
-    const tasks = await Task.find(query).sort(sortObj)
-    res.status(200).json(tasks)
+    // Count total documents matching query (for pagination math)
+    const count = await Task.countDocuments(query)
+
+    // Await find with pagination
+    const tasks = await Task.find(query)
+      .sort(sortObj)
+      .limit(limit)
+      .skip(skip)
+
+    res.status(200).json({
+      tasks,
+      page,
+      pages: Math.ceil(count / limit),
+      total: count,
+    })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

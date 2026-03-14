@@ -12,6 +12,7 @@ export function useTasks() {
 
 export function TaskProvider({ children }) {
   const [tasks, setTasks] = useState([])
+  const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   
@@ -23,6 +24,7 @@ export function TaskProvider({ children }) {
       fetchTasks()
     } else {
       setTasks([]) // Clear tasks on logout
+      setPagination({ page: 1, pages: 1, total: 0 })
     }
   }, [user])
 
@@ -30,7 +32,12 @@ export function TaskProvider({ children }) {
     setLoading(true)
     try {
       const data = await taskService.getTasks(filters)
-      setTasks(data)
+      setTasks(data.tasks || []) // Extract tasks array
+      setPagination({
+        page: data.page || 1,
+        pages: data.pages || 1,
+        total: data.total || 0
+      })
     } catch (err) {
       setError(err.response?.data?.message || err.message)
     } finally {

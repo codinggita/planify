@@ -1,4 +1,5 @@
 import { NavLink, Link } from 'react-router-dom'
+import ThemeToggle from '../features/theme/ThemeToggle'
 
 const NAV_LINKS = [
   { to: '/',          label: 'Home'      },
@@ -37,8 +38,10 @@ function Navbar() {
           ))}
         </nav>
 
-        {/* Right side — theme toggle + auth buttons added in later steps */}
+        {/* Right side — Theme toggle + auth buttons */}
         <div className="flex items-center gap-2">
+          <ThemeToggle />
+          {/* These will be replaced by user avatar after auth (Step 3) */}
           <Link to="/login"  className="btn-ghost text-sm">Login</Link>
           <Link to="/signup" className="btn-primary text-sm">Sign up</Link>
         </div>

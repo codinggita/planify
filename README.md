@@ -23,8 +23,13 @@ Step 1 - feat: add routing and basic pages with Tailwind layout
 - Configured Tailwind CSS with reusable component classes (btn, card, input, badge)
 - Status: COMPLETED
 
-Step 2 - Theme Context (Dark / Light Mode) — coming next
-Step 3 - Authentication Context + Login / Signup forms
+Step 2 - feat: add dark/light theme toggle with localStorage persistence
+- Created ThemeContext with localStorage persistence
+- Created ThemeToggle Sun/Moon component
+- Configured Tailwind HTML dark mode switching
+- Status: COMPLETED
+
+Step 3 - Authentication Context + Login / Signup forms — coming next
 Step 4 - Backend Authentication APIs (Node + Express + JWT)
 Step 5 - Task CRUD (Create, Read, Update, Delete)
 Step 6 - Search + Filter + Sort + Debouncing

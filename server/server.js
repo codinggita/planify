@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import connectDB from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
+import taskRoutes from './routes/taskRoutes.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
 // Load env vars
@@ -22,6 +23,7 @@ app.use(cors())
 
 // Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/tasks', taskRoutes)
 
 // Custom error handler
 app.use(errorHandler)

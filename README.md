@@ -46,8 +46,18 @@ Step 4 - feat: add backend authentication APIs (Node, Express, MongoDB, JWT)
 - Switched frontend authService to use real Axios HTTP calls
 - Status: COMPLETED
 
-Step 5 - Task CRUD (Create, Read, Update, Delete) — coming next
-Step 6 - Search + Filter + Sort + Debouncing
+Step 5 - feat: add task CRUD with MongoDB and React Context
+- Created Task Mongoose Model with title, description, status, priority, dueDate, tags
+- Created Task Express Controller (getTasks, createTask, updateTask, deleteTask)
+- Created protected Express Task Routes mapping to the Controller
+- Built frontend `taskService` to make authorized Axios HTTP calls
+- Built frontend `TaskContext` holding global tasks state, fetching dynamically on login
+- Created fully functional `Dashboard` mapping over real data instead of placeholders
+- Created a reusable `Modal` component
+- Created a `TaskFormModal` for creating new UI tasks
+- Status: COMPLETED
+
+Step 6 - Search + Filter + Sort + Debouncing — coming next
 Step 7 - Pagination
 Step 8 - Form Validation
 Step 9 - Error Handling

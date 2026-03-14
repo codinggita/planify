@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
+import LoginForm from '../features/auth/LoginForm'
 
 function Login() {
   return (
-    <div className="page flex items-center justify-center px-4 py-16">
+    <div className="page flex flex-col items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
         <div className="card">
           {/* Header */}
@@ -16,36 +17,7 @@ function Login() {
             </p>
           </div>
 
-          {/* Form — wired to auth context in Step 3 */}
-          <form className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="input"
-                disabled
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                className="input"
-                disabled
-              />
-            </div>
-
-            <button type="button" className="btn-primary w-full mt-2" disabled>
-              Sign in — coming in Step 3
-            </button>
-          </form>
+          <LoginForm />
 
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
             Don't have an account?{' '}
@@ -55,6 +27,11 @@ function Login() {
           </p>
         </div>
       </div>
+      
+      {/* Dev helper note */}
+      <p className="mt-8 text-xs text-center text-gray-400">
+        Demo tip: use any email and <strong className="font-mono">password123</strong> for testing.
+      </p>
     </div>
   )
 }

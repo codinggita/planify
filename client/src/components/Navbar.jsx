@@ -1,13 +1,21 @@
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import ThemeToggle from '../features/theme/ThemeToggle'
+import { useAuth } from '../features/auth/authContext'
 
 const NAV_LINKS = [
   { to: '/',          label: 'Home'      },
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/profile',   label: 'Profile'   },
 ]
 
 function Navbar() {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -38,12 +46,25 @@ function Navbar() {
           ))}
         </nav>
 
-        {/* Right side — Theme toggle + auth buttons */}
-        <div className="flex items-center gap-2">
+        {/* Right side — Theme toggle + Auth */}
+        <div className="flex items-center gap-3">
           <ThemeToggle />
-          {/* These will be replaced by user avatar after auth (Step 3) */}
-          <Link to="/login"  className="btn-ghost text-sm">Login</Link>
-          <Link to="/signup" className="btn-primary text-sm">Sign up</Link>
+          
+          {user ? (
+            <div className="flex items-center gap-3 pl-2 border-l border-gray-200 dark:border-gray-700">
+              <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 font-bold text-sm" title="Profile">
+                {user.name.charAt(0).toUpperCase()}
+              </Link>
+              <button onClick={handleLogout} className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-gray-300">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link to="/login"  className="btn-ghost text-sm">Login</Link>
+              <Link to="/signup" className="btn-primary text-sm">Sign up</Link>
+            </div>
+          )}
         </div>
       </div>
     </header>

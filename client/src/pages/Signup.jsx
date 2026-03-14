@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import SignupForm from '../features/auth/SignupForm'
 
 function Signup() {
   return (
@@ -16,48 +17,7 @@ function Signup() {
             </p>
           </div>
 
-          {/* Form — wired to auth context in Step 3 */}
-          <form className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Full name
-              </label>
-              <input
-                type="text"
-                placeholder="Your name"
-                className="input"
-                disabled
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="input"
-                disabled
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Min. 8 characters"
-                className="input"
-                disabled
-              />
-            </div>
-
-            <button type="button" className="btn-primary w-full mt-2" disabled>
-              Create account — coming in Step 3
-            </button>
-          </form>
+          <SignupForm />
 
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
             Already have an account?{' '}

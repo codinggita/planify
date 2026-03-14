@@ -29,8 +29,15 @@ Step 2 - feat: add dark/light theme toggle with localStorage persistence
 - Configured Tailwind HTML dark mode switching
 - Status: COMPLETED
 
-Step 3 - Authentication Context + Login / Signup forms — coming next
-Step 4 - Backend Authentication APIs (Node + Express + JWT)
+Step 3 - feat: add authentication context and login/signup forms
+- Created AuthContext for global user state
+- Implemented Login and Signup forms with React state
+- Built mock authService simulating API delays and JWT generation
+- Updated Navbar and Profile to dynamically show logged-in user details
+- Stored mock JWT in localStorage to mimic accurate session persistence
+- Status: COMPLETED
+
+Step 4 - Backend Authentication APIs (Node + Express + JWT) — coming next
 Step 5 - Task CRUD (Create, Read, Update, Delete)
 Step 6 - Search + Filter + Sort + Debouncing
 Step 7 - Pagination

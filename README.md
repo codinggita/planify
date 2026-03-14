@@ -13,6 +13,32 @@ Planify solves this problem by providing a centralized task management system wh
 
 Features
 
+Development Progress
+
+Step 1 - feat: add routing and basic pages with Tailwind layout
+- Set up React Router with BrowserRouter
+- Created 5 routes: / | /login | /signup | /dashboard | /profile
+- Built sticky Navbar with active link highlighting
+- Created page shells for Home, Login, Signup, Dashboard, Profile
+- Configured Tailwind CSS with reusable component classes (btn, card, input, badge)
+- Status: COMPLETED
+
+Step 2 - Theme Context (Dark / Light Mode) — coming next
+Step 3 - Authentication Context + Login / Signup forms
+Step 4 - Backend Authentication APIs (Node + Express + JWT)
+Step 5 - Task CRUD (Create, Read, Update, Delete)
+Step 6 - Search + Filter + Sort + Debouncing
+Step 7 - Pagination
+Step 8 - Form Validation
+Step 9 - Error Handling
+Step 10 - Task Progress Tracking
+Step 11 - Drag and Drop Tasks
+Step 12 - Productivity Streak System
+Step 13 - Task Notes
+Step 14 - Activity History
+
+
+
 User Authentication (Signup & Login)
 
 Protected Routes for authenticated users

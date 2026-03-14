@@ -80,8 +80,13 @@ Step 8 - feat: add form validation with zod and react-hook-form
 - Display dynamic inline error messages matching input fields
 - Status: COMPLETED
 
-Step 9 - Error Handling — coming next
-Step 10 - Task Progress Tracking
+Step 9 - feat: add error handling and toast notifications
+- Installed `react-hot-toast` for global success/error popups
+- Updated Context Providers to display native toasts instead of simple string errors
+- Created a top-level `ErrorBoundary` React Class Component to catch JS crashes and prevent white screens
+- Status: COMPLETED
+
+Step 10 - Task Progress Tracking — coming next
 Step 11 - Drag and Drop Tasks
 Step 12 - Productivity Streak System
 Step 13 - Task Notes

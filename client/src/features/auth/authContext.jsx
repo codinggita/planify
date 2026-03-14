@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react'
 import * as authService from './authService'
+import toast from 'react-hot-toast'
 
 export const AuthContext = createContext()
 
@@ -40,9 +41,11 @@ export function AuthProvider({ children }) {
       const { user: newUser, token } = await authService.signup(userData)
       localStorage.setItem('planify-token', token)
       setUser(newUser)
+      toast.success('Account created successfully!')
       return { success: true }
     } catch (err) {
       setError(err.message || 'Signup failed')
+      toast.error(err.message || 'Signup failed')
       return { success: false, error: err.message }
     } finally {
       setLoading(false)
@@ -56,9 +59,11 @@ export function AuthProvider({ children }) {
       const { user: loggedInUser, token } = await authService.login(credentials)
       localStorage.setItem('planify-token', token)
       setUser(loggedInUser)
+      toast.success('Welcome back!')
       return { success: true }
     } catch (err) {
       setError(err.message || 'Login failed')
+      toast.error(err.message || 'Login failed')
       return { success: false, error: err.message }
     } finally {
       setLoading(false)

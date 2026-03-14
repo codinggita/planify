@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext } from 'react'
 import * as taskService from './taskService'
 import { useAuth } from '../auth/authContext'
+import toast from 'react-hot-toast'
 
 export const TaskContext = createContext()
 
@@ -39,7 +40,9 @@ export function TaskProvider({ children }) {
         total: data.total || 0
       })
     } catch (err) {
-      setError(err.response?.data?.message || err.message)
+      const msg = err.response?.data?.message || err.message
+      setError(msg)
+      toast.error(`Failed to load tasks: ${msg}`)
     } finally {
       setLoading(false)
     }
@@ -50,9 +53,12 @@ export function TaskProvider({ children }) {
     try {
       const newTask = await taskService.createTask(taskData)
       setTasks([newTask, ...tasks])
+      toast.success('Task created successfully')
       return { success: true }
     } catch (err) {
-      setError(err.response?.data?.message || err.message)
+      const msg = err.response?.data?.message || err.message
+      setError(msg)
+      toast.error(`Failed to create task: ${msg}`)
       return { success: false, error: err.message }
     } finally {
       setLoading(false)
@@ -63,9 +69,12 @@ export function TaskProvider({ children }) {
     try {
       const updatedTask = await taskService.updateTask(taskId, taskData)
       setTasks(tasks.map((task) => (task._id === taskId ? updatedTask : task)))
+      toast.success('Task updated successfully')
       return { success: true }
     } catch (err) {
-      setError(err.response?.data?.message || err.message)
+      const msg = err.response?.data?.message || err.message
+      setError(msg)
+      toast.error(`Failed to update task: ${msg}`)
       return { success: false, error: err.message }
     }
   }
@@ -74,9 +83,12 @@ export function TaskProvider({ children }) {
     try {
       await taskService.deleteTask(taskId)
       setTasks(tasks.filter((task) => task._id !== taskId))
+      toast.success('Task deleted')
       return { success: true }
     } catch (err) {
-      setError(err.response?.data?.message || err.message)
+      const msg = err.response?.data?.message || err.message
+      setError(msg)
+      toast.error(`Failed to delete task: ${msg}`)
       return { success: false, error: err.message }
     }
   }

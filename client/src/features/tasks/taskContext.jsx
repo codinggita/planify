@@ -93,6 +93,24 @@ export function TaskProvider({ children }) {
     }
   }
 
+  const updateTaskStatus = async (taskId, newStatus) => {
+    // Optimistic UI update for snappy drag and drop
+    const previousTasks = [...tasks]
+    setTasks(tasks.map((task) => (task._id === taskId ? { ...task, status: newStatus } : task)))
+
+    try {
+      await taskService.updateTask(taskId, { status: newStatus })
+      fetchTaskStats() // Update stats
+      return { success: true }
+    } catch (err) {
+      // Revert on error
+      setTasks(previousTasks)
+      const msg = err.response?.data?.message || err.message
+      toast.error(`Failed to move task: ${msg}`)
+      return { success: false, error: err.message }
+    }
+  }
+
   const removeTask = async (taskId) => {
     try {
       await taskService.deleteTask(taskId)
@@ -109,7 +127,7 @@ export function TaskProvider({ children }) {
   }
 
   return (
-    <TaskContext.Provider value={{ tasks, stats, loading, error, fetchTasks, fetchTaskStats, addTask, editTask, removeTask, setError }}>
+    <TaskContext.Provider value={{ tasks, stats, loading, error, fetchTasks, fetchTaskStats, addTask, editTask, updateTaskStatus, removeTask, setError }}>
       {children}
     </TaskContext.Provider>
   )

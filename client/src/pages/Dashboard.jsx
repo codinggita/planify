@@ -4,39 +4,43 @@ import TaskFormModal from '../features/tasks/TaskFormModal'
 import { SearchBar } from '../features/search/SearchBar'
 import { FilterPanel } from '../features/filters/FilterPanel'
 import { SortDropdown } from '../features/filters/SortDropdown'
-import { Pagination } from '../features/pagination/Pagination' // <---- NEW
+import { Pagination } from '../features/pagination/Pagination'
 import { ProgressTracker } from '../features/tasks/ProgressTracker'
+import { KanbanBoard } from '../features/tasks/KanbanBoard'
 
 function Dashboard() {
   const { tasks, pagination, loading, error, fetchTasks, removeTask } = useTasks()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  
+  const [viewMode, setViewMode] = useState('list') // 'list' | 'board'
+
   // State for all query parameters including pagination
   const [filters, setFilters] = useState({
     search: '',
     status: '',
     priority: '',
     sort: '',
-    pageNumber: 1, // <---- NEW
+    pageNumber: 1,
   })
 
-  // Re-fetch tasks whenever filters change
+  // Re-fetch tasks whenever filters or viewMode changes
   useEffect(() => {
-    fetchTasks(filters)
-  }, [filters])
+    if (viewMode === 'board') {
+      // Fetch all tasks for kanban (no pagination)
+      fetchTasks({ ...filters, pageNumber: 1, limit: 100 })
+    } else {
+      fetchTasks(filters)
+    }
+  }, [filters, viewMode])
 
   const handleSearch = (searchTerm) => {
-    // Reset to page 1 on new search
     setFilters(prev => ({ ...prev, search: searchTerm, pageNumber: 1 }))
   }
 
   const handleFilterChange = (key, value) => {
-     // Reset to page 1 on new filter
     setFilters(prev => ({ ...prev, [key]: value, pageNumber: 1 }))
   }
 
   const handleSortChange = (value) => {
-     // Reset to page 1 on new sort
     setFilters(prev => ({ ...prev, sort: value, pageNumber: 1 }))
   }
 
@@ -48,7 +52,7 @@ function Dashboard() {
     <div className="page flex flex-col min-h-screen">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex flex-col flex-1">
         
-        {/* Header section w/ New Task button */}
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Tasks</h1>
@@ -56,15 +60,43 @@ function Dashboard() {
               Manage your tasks and track productivity
             </p>
           </div>
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="btn-primary flex items-center gap-2 self-start sm:self-auto"
-          >
-            <span className="text-lg leading-none">+</span>
-            New Task
-          </button>
+
+          <div className="flex items-center gap-3 flex-wrap self-start sm:self-auto">
+            {/* View toggle */}
+            <div className="flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  viewMode === 'list'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                }`}
+              >
+                ☰ List
+              </button>
+              <button
+                onClick={() => setViewMode('board')}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  viewMode === 'board'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                }`}
+              >
+                ⬛ Board
+              </button>
+            </div>
+
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="btn-primary flex items-center gap-2"
+            >
+              <span className="text-lg leading-none">+</span>
+              New Task
+            </button>
+          </div>
         </div>
 
+        {/* Progress Tracker */}
         <ProgressTracker />
 
         {/* Search, Filters & Sort Bar */}
@@ -80,22 +112,23 @@ function Dashboard() {
 
         <TaskFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-        {/* Dynamic Task Grid */}
+        {/* Content Area */}
         <div className="flex-1">
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-               {[...Array(6)].map((_, i) => (
-                  <div key={i} className="card animate-pulse">
-                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3" />
-                    <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-full mb-2" />
-                    <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-2/3" />
-                  </div>
-               ))}
+            <div className={viewMode === 'board' ? 'grid grid-cols-1 md:grid-cols-3 gap-6' : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'}>
+              {[...Array(viewMode === 'board' ? 3 : 6)].map((_, i) => (
+                <div key={i} className={`${viewMode === 'board' ? 'min-h-[300px]' : 'card'} animate-pulse bg-gray-100 dark:bg-gray-800 rounded-xl`}>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3 m-4" />
+                  <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-full mb-2 mx-4" />
+                </div>
+              ))}
             </div>
           ) : error ? (
-             <div className="p-4 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-lg">
-               Failed to load tasks: {error}
-             </div>
+            <div className="p-4 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-lg">
+              Failed to load tasks: {error}
+            </div>
+          ) : viewMode === 'board' ? (
+            <KanbanBoard tasks={tasks} />
           ) : tasks.length === 0 ? (
             <div className="text-center py-20 px-4 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800">
               <span className="text-4xl block mb-4">🎯</span>
@@ -124,7 +157,6 @@ function Dashboard() {
                     </p>
                   )}
                   <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                    {/* Status Badge */}
                     <span className={`text-xs font-medium px-2 py-1 rounded-md ${
                       task.status === 'Done' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
                       task.status === 'In Progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
@@ -134,8 +166,8 @@ function Dashboard() {
                     </span>
                     
                     <div className="flex gap-2">
-                       <button className="text-sm font-medium text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Edit</button>
-                       <button onClick={() => removeTask(task._id)} className="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Del</button>
+                      <button className="text-sm font-medium text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Edit</button>
+                      <button onClick={() => removeTask(task._id)} className="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Del</button>
                     </div>
                   </div>
                 </div>
@@ -144,8 +176,8 @@ function Dashboard() {
           )}
         </div>
 
-        {/* Pagination */}
-        {!loading && (
+        {/* Pagination — only in list mode */}
+        {!loading && viewMode === 'list' && (
           <Pagination 
             currentPage={pagination.page} 
             totalPages={pagination.pages} 

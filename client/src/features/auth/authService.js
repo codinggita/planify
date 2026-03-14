@@ -1,46 +1,30 @@
-// Mock API service for Step 3 until Backend is built in Step 4
+import axios from 'axios'
 
-const MOCK_DELAY = 1000
+const API_URL = '/api/auth/'
 
-const mockWait = () => new Promise(res => setTimeout(res, MOCK_DELAY))
-
+// Register user
 export const signup = async (userData) => {
-  await mockWait()
-  
-  if (!userData.email || !userData.password || !userData.name) {
-    throw new Error('All fields are required')
-  }
-
-  // Simulate a successful signup response
-  return {
-    user: { id: 'usr_123', name: userData.name, email: userData.email },
-    token: 'mock_jwt_token_12345'
-  }
+  const response = await axios.post(API_URL + 'signup', userData)
+  return response.data
 }
 
-export const login = async (credentials) => {
-  await mockWait()
-
-  if (!credentials.email || !credentials.password) {
-    throw new Error('Email and password required')
-  }
-  
-  if (credentials.password !== 'password123') {
-    throw new Error('Invalid credentials (use password123 for testing)')
-  }
-
-  // Simulate a successful login response
-  return {
-    user: { id: 'usr_123', name: 'Test User', email: credentials.email },
-    token: 'mock_jwt_token_12345'
-  }
+// Login user
+export const login = async (userData) => {
+  const response = await axios.post(API_URL + 'login', userData)
+  return response.data
 }
 
+// Get user profile
 export const getMe = async () => {
-  await mockWait()
-  
   const token = localStorage.getItem('planify-token')
-  if (!token) throw new Error('Not authenticated')
+  if (!token) throw new Error('No token found')
 
-  return { id: 'usr_123', name: 'Test User', email: 'test@example.com' }
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+
+  const response = await axios.get(API_URL + 'me', config)
+  return response.data
 }

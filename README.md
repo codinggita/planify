@@ -37,8 +37,16 @@ Step 3 - feat: add authentication context and login/signup forms
 - Stored mock JWT in localStorage to mimic accurate session persistence
 - Status: COMPLETED
 
-Step 4 - Backend Authentication APIs (Node + Express + JWT) — coming next
-Step 5 - Task CRUD (Create, Read, Update, Delete)
+Step 4 - feat: add backend authentication APIs (Node, Express, MongoDB, JWT)
+- Set up Express server with CORS and error handling middleware
+- Configured MongoDB connection via Mongoose
+- Created User model with bcrypt password hashing
+- Created Auth logic (register, login, get user profile) with JWT signing
+- Protected routes using JWT verification middleware
+- Switched frontend authService to use real Axios HTTP calls
+- Status: COMPLETED
+
+Step 5 - Task CRUD (Create, Read, Update, Delete) — coming next
 Step 6 - Search + Filter + Sort + Debouncing
 Step 7 - Pagination
 Step 8 - Form Validation

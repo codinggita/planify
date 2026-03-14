@@ -1,24 +1,49 @@
 import { useState, useEffect } from 'react'
 import { useTasks } from '../features/tasks/taskContext'
 import TaskFormModal from '../features/tasks/TaskFormModal'
+import { SearchBar } from '../features/search/SearchBar'
+import { FilterPanel } from '../features/filters/FilterPanel'
+import { SortDropdown } from '../features/filters/SortDropdown'
 
 function Dashboard() {
   const { tasks, loading, error, fetchTasks, removeTask } = useTasks()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // State for all query parameters
+  const [filters, setFilters] = useState({
+    search: '',
+    status: '',
+    priority: '',
+    sort: '',
+  })
 
+  // Re-fetch tasks whenever filters change
   useEffect(() => {
-    fetchTasks()
-  }, [])
+    fetchTasks(filters)
+  }, [filters])
+
+  const handleSearch = (searchTerm) => {
+    setFilters(prev => ({ ...prev, search: searchTerm }))
+  }
+
+  const handleFilterChange = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }))
+  }
+
+  const handleSortChange = (value) => {
+    setFilters(prev => ({ ...prev, sort: value }))
+  }
 
   return (
     <div className="page flex flex-col">
       <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header section */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        
+        {/* Header section w/ New Task button */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Tasks</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Your workspace — tasks, search, and filters will appear here
+              Manage your tasks and track productivity
             </p>
           </div>
           <button 
@@ -28,6 +53,17 @@ function Dashboard() {
             <span className="text-lg leading-none">+</span>
             New Task
           </button>
+        </div>
+
+        {/* Search, Filters & Sort Bar */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-800">
+          <SearchBar onSearch={handleSearch} />
+          
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full lg:w-auto">
+            <FilterPanel filters={filters} onFilterChange={handleFilterChange} />
+            <div className="hidden sm:block w-px h-8 bg-gray-200 dark:bg-gray-700"></div>
+            <SortDropdown sort={filters.sort} onSortChange={handleSortChange} />
+          </div>
         </div>
 
         <TaskFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

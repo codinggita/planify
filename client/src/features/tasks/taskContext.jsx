@@ -26,10 +26,10 @@ export function TaskProvider({ children }) {
     }
   }, [user])
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (filters = {}) => {
     setLoading(true)
     try {
-      const data = await taskService.getTasks()
+      const data = await taskService.getTasks(filters)
       setTasks(data)
     } catch (err) {
       setError(err.response?.data?.message || err.message)

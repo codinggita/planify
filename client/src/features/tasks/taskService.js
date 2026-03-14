@@ -11,8 +11,15 @@ const getAuthHeaders = () => {
   }
 }
 
-export const getTasks = async () => {
-  const response = await axios.get(API_URL, getAuthHeaders())
+export const getTasks = async (queryParams = {}) => {
+  // Build query string from object
+  const queryString = new URLSearchParams(
+    Object.entries(queryParams).filter(([_, v]) => v) // filter out empty values
+  ).toString()
+
+  const url = queryString ? `${API_URL}?${queryString}` : API_URL
+  
+  const response = await axios.get(url, getAuthHeaders())
   return response.data
 }
 

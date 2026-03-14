@@ -1,11 +1,39 @@
 import Task from '../models/Task.js'
 
-// @desc    Get all tasks for the logged in user
+// @desc    Get all tasks for the logged in user (with search, filter, sort)
 // @route   GET /api/tasks
 // @access  Private
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user.id }).sort({ createdAt: -1 })
+    const { search, status, priority, sort } = req.query
+
+    // Base query: only tasks belonging to user
+    let query = { user: req.user.id }
+
+    // Search by title or description (regex, case-insensitive)
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+      ]
+    }
+
+    // Exact match filters
+    if (status) query.status = status
+    if (priority) query.priority = priority
+
+    // Default sorting (newest first)
+    let sortObj = { createdAt: -1 }
+
+    if (sort === 'oldest') sortObj = { createdAt: 1 }
+    if (sort === 'priority') {
+      // Custom priority sorting will require aggregate or client-side sorting usually.
+      // For simplicity, alphabetical sort on Priority (High -> Low -> Medium)
+      sortObj = { priority: 1, createdAt: -1 } 
+    }
+    if (sort === 'dueDate') sortObj = { dueDate: 1, createdAt: -1 }
+
+    const tasks = await Task.find(query).sort(sortObj)
     res.status(200).json(tasks)
   } catch (error) {
     res.status(500).json({ message: error.message })

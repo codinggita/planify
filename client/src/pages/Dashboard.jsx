@@ -1,40 +1,98 @@
-function Dashboard() {
-  return (
-    <div className="page">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+import { useState, useEffect } from 'react'
+import { useTasks } from '../features/tasks/taskContext'
+import TaskFormModal from '../features/tasks/TaskFormModal'
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+function Dashboard() {
+  const { tasks, loading, error, fetchTasks, removeTask } = useTasks()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  useEffect(() => {
+    fetchTasks()
+  }, [])
+
+  return (
+    <div className="page flex flex-col">
+      <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header section */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              My Tasks
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Tasks</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Your workspace — tasks, search, and filters will appear here
             </p>
           </div>
-          <button className="btn-primary" disabled>
-            + New Task
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="btn-primary flex items-center gap-2 self-start sm:self-auto"
+          >
+            <span className="text-lg leading-none">+</span>
+            New Task
           </button>
         </div>
 
-        {/* Placeholder grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="card animate-pulse"
-            >
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3" />
-              <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-full mb-2" />
-              <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-2/3" />
-            </div>
-          ))}
-        </div>
+        <TaskFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
-        <p className="text-center text-gray-400 dark:text-gray-600 mt-10 text-sm">
-          🔒 Task CRUD will be implemented in Step 5 · Auth required (Step 2–4)
-        </p>
+        {/* Dynamic Task Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+             {[...Array(6)].map((_, i) => (
+                <div key={i} className="card animate-pulse">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3" />
+                  <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-full mb-2" />
+                  <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-2/3" />
+                </div>
+             ))}
+          </div>
+        ) : error ? (
+           <div className="p-4 bg-red-50 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-lg">
+             Failed to load tasks: {error}
+           </div>
+        ) : tasks.length === 0 ? (
+          <div className="text-center py-20 px-4 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800">
+            <span className="text-4xl block mb-4">🎯</span>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">No tasks yet</h3>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 mb-6">
+              Get started by creating your first task.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tasks.map(task => (
+              <div key={task._id} className="card hover:shadow-md transition-shadow cursor-default flex flex-col">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-semibold text-gray-900 dark:text-white text-lg">{task.title}</h3>
+                  <span className={`badge ${
+                    task.priority === 'High' ? 'bg-red-100 text-red-700 dark:bg-red-900/30' :
+                    task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30' :
+                    'bg-green-100 text-green-700 dark:bg-green-900/30'
+                  }`}>
+                    {task.priority}
+                  </span>
+                </div>
+                {task.description && (
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">
+                    {task.description}
+                  </p>
+                )}
+                <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                  {/* Status Badge */}
+                  <span className={`text-xs font-medium px-2 py-1 rounded-md ${
+                    task.status === 'Done' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                    task.status === 'In Progress' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                    'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                  }`}>
+                    {task.status}
+                  </span>
+                  
+                  <div className="flex gap-2">
+                     <button className="text-sm font-medium text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Edit</button>
+                     <button onClick={() => removeTask(task._id)} className="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Del</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

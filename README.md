@@ -57,8 +57,15 @@ Step 5 - feat: add task CRUD with MongoDB and React Context
 - Created a `TaskFormModal` for creating new UI tasks
 - Status: COMPLETED
 
-Step 6 - Search + Filter + Sort + Debouncing — coming next
-Step 7 - Pagination
+Step 6 - feat: add task search, filter, sort and debouncing
+- Updated Express `getTasks` controller to process `req.query` for search (regex), status, priority, and sort options
+- Built `useDebounce` custom React hook to delay API calls while typing
+- Created `SearchBar`, `FilterPanel`, and `SortDropdown` UI components
+- Updated `taskService` to convert React state filters into URL Query Strings
+- Integrated real-time filtering into the `Dashboard`
+- Status: COMPLETED
+
+Step 7 - Pagination — coming next
 Step 8 - Form Validation
 Step 9 - Error Handling
 Step 10 - Task Progress Tracking

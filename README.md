@@ -122,6 +122,19 @@ Step 14 - feat: add activity history feed
 - Mounted `ActivityFeed` into the main `Dashboard.jsx` interface
 - Status: COMPLETED
 
+Step 15 - feat: add real-time platform analytics visualization
+- Created public `/api/tasks/public/stats` endpoint for aggregated platform data
+- Implemented dedicated "Analytics Visualized" showcase section on the landing page
+- Integrated live backend data (total tasks, completion rates) instead of mock values
+- Status: COMPLETED
+
+Step 16 - feat: refine task logic and auth error handling
+- Locked task status during edits to prevent unauthorized workflow changes
+- Implemented `clearError` and `formatAuthError` in `AuthContext`
+- Technical errors (502, 500) now map to user-friendly, branded messages
+- Automated error clearing during navigation between login and signup
+- Status: COMPLETED
+
 
 
 User Authentication (Signup & Login)

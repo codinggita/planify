@@ -15,7 +15,7 @@ export const getTasks = async (req, res) => {
     const skip = (page - 1) * limit
 
     // Base query: only tasks belonging to user
-    let query = { user: req.user.id }
+    let query = { user: req.user._id }
 
     // Search by title or description (regex, case-insensitive)
     if (search) {
@@ -63,14 +63,14 @@ export const getTasks = async (req, res) => {
 // @access  Private
 export const createTask = async (req, res) => {
   try {
-    const { title, description, status, priority, dueDate, tags } = req.body
+    const { title, description, notes, status, priority, dueDate, tags } = req.body
 
     if (!title) {
       return res.status(400).json({ message: 'Please add a title' })
     }
 
     const task = await Task.create({
-      user: req.user.id,
+      user: req.user._id,
       title,
       description,
       notes,
@@ -82,7 +82,7 @@ export const createTask = async (req, res) => {
 
     // Log Activity
     await Activity.create({
-      user: req.user.id,
+      user: req.user._id,
       action: 'CREATED_TASK',
       taskTitle: task.title,
     })
@@ -105,7 +105,7 @@ export const updateTask = async (req, res) => {
     }
 
     // Make sure the logged in user matches the task user
-    if (task.user.toString() !== req.user.id) {
+    if (task.user.toString() !== req.user._id.toString()) {
       return res.status(401).json({ message: 'Not authorized to update this task' })
     }
 
@@ -117,13 +117,13 @@ export const updateTask = async (req, res) => {
     if (req.body.status && req.body.status !== task.status) {
       if (req.body.status === 'Done') {
         await Activity.create({
-          user: req.user.id,
+          user: req.user._id,
           action: 'COMPLETED_TASK',
           taskTitle: task.title,
         })
       } else if (req.body.status === 'In Progress') {
         await Activity.create({
-          user: req.user.id,
+          user: req.user._id,
           action: 'STARTED_TASK',
           taskTitle: task.title,
         })
@@ -148,7 +148,7 @@ export const deleteTask = async (req, res) => {
     }
 
     // Make sure the logged in user matches the task user
-    if (task.user.toString() !== req.user.id) {
+    if (task.user.toString() !== req.user._id.toString()) {
       return res.status(401).json({ message: 'Not authorized to delete this task' })
     }
 
@@ -156,7 +156,7 @@ export const deleteTask = async (req, res) => {
 
     // Log Activity
     await Activity.create({
-      user: req.user.id,
+      user: req.user._id,
       action: 'DELETED_TASK',
       taskTitle: task.title, // Use original title, it's safe since it's already fetched
     })
@@ -167,13 +167,31 @@ export const deleteTask = async (req, res) => {
   }
 }
 
+// @desc    Get global statistics for the platform (public)
+// @route   GET /api/tasks/public/stats
+// @access  Public
+export const getGlobalStats = async (req, res) => {
+  try {
+    const totalTasks = await Task.countDocuments({})
+    const completedTasks = await Task.countDocuments({ status: 'Done' })
+    
+    // Calculate a mock growth percentage based on total tasks for visual flair
+    // but the count itself is real.
+    const growth = totalTasks > 0 ? ((completedTasks / totalTasks) * 100).toFixed(1) : 0
+
+    res.status(200).json({ totalTasks, completedTasks, growth })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 // @desc    Get task statistics for the user
 // @route   GET /api/tasks/stats
 // @access  Private
 export const getTaskStats = async (req, res) => {
   try {
-    const totalTasks = await Task.countDocuments({ user: req.user.id })
-    const completedTasks = await Task.countDocuments({ user: req.user.id, status: 'Done' })
+    const totalTasks = await Task.countDocuments({ user: req.user._id })
+    const completedTasks = await Task.countDocuments({ user: req.user._id, status: 'Done' })
     
     res.status(200).json({ totalTasks, completedTasks })
   } catch (error) {

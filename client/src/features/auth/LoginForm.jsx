@@ -1,11 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from './authContext'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '../validation/schemas'
 
 export default function LoginForm() {
-  const { login, loading, error: authError } = useAuth()
+  const { login, loading, error: authError, clearError } = useAuth()
+  
+  // Clear any existing errors when the component mounts
+  useEffect(() => {
+    clearError()
+  }, [clearError])
   
   const {
     register,
@@ -20,7 +25,7 @@ export default function LoginForm() {
   })
 
   const onSubmit = async (data) => {
-    await login(data.email, data.password)
+    await login(data)
   }
 
   return (

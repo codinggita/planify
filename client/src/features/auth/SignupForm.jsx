@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from './authContext'
 import { useForm } from 'react-hook-form'
@@ -5,8 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signupSchema } from '../validation/schemas'
 
 function SignupForm() {
-  const { signup, loading, error: authError } = useAuth()
+  const { signup, loading, error: authError, clearError } = useAuth()
   const navigate = useNavigate()
+
+  // Clear any existing errors when the component mounts
+  useEffect(() => {
+    clearError()
+  }, [clearError])
 
   const {
     register,

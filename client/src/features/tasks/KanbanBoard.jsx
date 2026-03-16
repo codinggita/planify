@@ -1,4 +1,5 @@
 import { DragDropContext, Droppable } from '@hello-pangea/dnd'
+import { Circle } from 'lucide-react'
 import { useTasks } from './taskContext'
 import { KanbanCard } from './KanbanCard'
 
@@ -56,10 +57,10 @@ export function KanbanBoard({ tasks, onEditClick }) {
               className={`flex flex-col rounded-xl border ${styles.border} bg-gray-50 dark:bg-gray-900/50 min-h-[400px]`}
             >
               {/* Column Header */}
-              <div className={`flex items-center gap-2 px-4 py-3 rounded-t-xl ${styles.header}`}>
-                <span className={`w-2.5 h-2.5 rounded-full ${styles.dot}`}></span>
-                <h3 className="font-semibold text-sm tracking-wide">{columnStatus}</h3>
-                <span className="ml-auto text-xs font-bold opacity-60">{columnTasks.length}</span>
+              <div className={`flex items-center gap-2 px-4 py-3 rounded-t-2xl ${styles.header}`}>
+                <Circle size={10} fill="currentColor" className={styles.dot} />
+                <h3 className="font-bold text-xs uppercase tracking-widest">{columnStatus}</h3>
+                <span className="ml-auto text-[10px] font-black bg-white/20 px-2 py-0.5 rounded-full">{columnTasks.length}</span>
               </div>
 
               {/* Droppable area */}

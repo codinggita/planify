@@ -1,4 +1,5 @@
 import { NavLink, Link, useNavigate } from 'react-router-dom'
+import { SquareCheck } from 'lucide-react'
 import ThemeToggle from '../features/theme/ThemeToggle'
 import { useAuth } from '../features/auth/authContext'
 import { StreakBadge } from './StreakBadge'
@@ -18,13 +19,15 @@ function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl text-violet-600 dark:text-violet-400">
-          <span className="text-2xl">📋</span>
-          <span>Planify</span>
+        <Link to="/" className="flex items-center gap-2 font-black text-xl tracking-tighter transition-transform hover:scale-105 active:scale-95 group">
+          <div className="w-9 h-9 rounded-xl bg-violet-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/30 group-hover:bg-violet-700 transition-all">
+            <SquareCheck size={20} strokeWidth={3} />
+          </div>
+          <span className="text-gray-900 dark:text-white uppercase">Planify</span>
         </Link>
 
         {/* Nav links */}
@@ -55,7 +58,7 @@ function Navbar() {
             <div className="flex items-center gap-3 pl-2 border-l border-gray-200 dark:border-gray-700">
               <StreakBadge />
               <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 font-bold text-sm" title="Profile">
-                {user.name.charAt(0).toUpperCase()}
+                {(user.name || '?').charAt(0).toUpperCase()}
               </Link>
               <button onClick={handleLogout} className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-gray-300">
                 Logout

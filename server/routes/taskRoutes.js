@@ -5,12 +5,16 @@ import {
   updateTask,
   deleteTask,
   getTaskStats,
+  getGlobalStats,
 } from '../controllers/taskController.js'
 import { protect } from '../middleware/authMiddleware.js'
 
 const router = express.Router()
 
-// Apply protect middleware to all task routes
+// Public routes
+router.get('/public/stats', getGlobalStats)
+
+// Apply protect middleware to all following task routes
 router.use(protect)
 
 router.route('/stats').get(getTaskStats)

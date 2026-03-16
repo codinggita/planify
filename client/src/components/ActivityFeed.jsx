@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { PlusCircle, PlayCircle, CheckCircle2, Trash2, History, MessageSquareText } from 'lucide-react'
 import { getRecentActivity } from '../features/tasks/taskService'
 
 export function ActivityFeed() {
@@ -26,15 +27,15 @@ export function ActivityFeed() {
   const getActivityIcon = (action) => {
     switch (action) {
       case 'CREATED_TASK':
-        return '✨'
+        return <PlusCircle size={14} className="text-violet-500" />
       case 'STARTED_TASK':
-        return '⏳'
+        return <PlayCircle size={14} className="text-blue-500" />
       case 'COMPLETED_TASK':
-        return '✅'
+        return <CheckCircle2 size={14} className="text-emerald-500" />
       case 'DELETED_TASK':
-        return '🗑️'
+        return <Trash2 size={14} className="text-red-500" />
       default:
-        return '📝'
+        return <MessageSquareText size={14} className="text-gray-500" />
     }
   }
 
@@ -98,25 +99,32 @@ export function ActivityFeed() {
   }
 
   return (
-    <div className="card w-full mb-6">
-      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Activity History</h3>
+    <div className="bg-white dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800 p-6 rounded-3xl transition-all duration-300">
+      <div className="flex items-center gap-2 mb-8">
+        <History size={18} className="text-violet-600 dark:text-violet-400" />
+        <h3 className="text-base font-bold text-gray-900 dark:text-white uppercase tracking-wider">Activity History</h3>
+      </div>
       
       {activities.length === 0 ? (
-        <p className="text-sm text-gray-500 dark:text-gray-400 italic">No recent activity.</p>
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <History size={40} className="text-gray-200 dark:text-gray-700 mb-2 opacity-50" />
+          <p className="text-sm text-gray-400 dark:text-gray-500 font-medium italic">No recent activity detected.</p>
+        </div>
       ) : (
-        <div className="relative border-l border-gray-200 dark:border-gray-700/50 ml-3 md:ml-4 space-y-6 lg:space-y-8">
+        <div className="relative border-l-2 border-gray-100 dark:border-gray-800 ml-3 space-y-10 pb-4">
           {activities.map((activity) => (
-            <div key={activity._id} className="relative pl-6">
+            <div key={activity._id} className="relative pl-8">
               {/* Timeline dot/icon */}
-              <span className="absolute flex items-center justify-center w-8 h-8 bg-gray-50 rounded-full -start-4 ring-8 ring-white dark:ring-gray-900 dark:bg-gray-800 text-sm">
+              <span className="absolute flex items-center justify-center w-8 h-8 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-xl -start-[17px] ring-4 ring-white dark:ring-gray-900 shadow-sm transition-transform hover:scale-110">
                 {getActivityIcon(activity.action)}
               </span>
               
-              <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between px-2 pt-1.5 gap-1">
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-bold text-gray-800 dark:text-gray-200 leading-tight">
                   {getActivityMessage(activity)}
                 </p>
-                <time className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                <time className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 tracking-widest flex items-center gap-1.5 pt-1">
+                  <span className="w-1 h-1 bg-gray-300 dark:bg-gray-700 rounded-full"></span>
                   {formatTimeAgo(activity.createdAt)}
                 </time>
               </div>

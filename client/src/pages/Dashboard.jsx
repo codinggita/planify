@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { Plus, List, Grid } from 'lucide-react'
 import { useTasks } from '../features/tasks/taskContext'
 import TaskFormModal from '../features/tasks/TaskFormModal'
 import { SearchBar } from '../features/search/SearchBar'
@@ -32,23 +33,31 @@ function Dashboard() {
     } else {
       fetchTasks(filters)
     }
-  }, [filters, viewMode])
+  }, [
+    filters.search, 
+    filters.status, 
+    filters.priority, 
+    filters.sort, 
+    filters.pageNumber, 
+    viewMode, 
+    fetchTasks
+  ])
 
-  const handleSearch = (searchTerm) => {
-    setFilters(prev => ({ ...prev, search: searchTerm, pageNumber: 1 }))
-  }
+  const handleSearch = useCallback((searchTerm) => {
+    setFilters(prev => (prev.search === searchTerm ? prev : { ...prev, search: searchTerm, pageNumber: 1 }))
+  }, [])
 
-  const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value, pageNumber: 1 }))
-  }
+  const handleFilterChange = useCallback((key, value) => {
+    setFilters(prev => (prev[key] === value ? prev : { ...prev, [key]: value, pageNumber: 1 }))
+  }, [])
 
-  const handleSortChange = (value) => {
-    setFilters(prev => ({ ...prev, sort: value, pageNumber: 1 }))
-  }
+  const handleSortChange = useCallback((value) => {
+    setFilters(prev => (prev.sort === value ? prev : { ...prev, sort: value, pageNumber: 1 }))
+  }, [])
 
-  const handlePageChange = (newPage) => {
-    setFilters(prev => ({ ...prev, pageNumber: newPage }))
-  }
+  const handlePageChange = useCallback((newPage) => {
+    setFilters(prev => (prev.pageNumber === newPage ? prev : { ...prev, pageNumber: newPage }))
+  }, [])
 
   const handleNewTask = () => {
     setEditingTask(null)
@@ -78,31 +87,33 @@ function Dashboard() {
             <div className="flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700">
               <button
                 onClick={() => setViewMode('list')}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                   viewMode === 'list'
                     ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
-                ☰ List
+                <List size={16} />
+                List
               </button>
               <button
                 onClick={() => setViewMode('board')}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                   viewMode === 'board'
                     ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
                 }`}
               >
-                ⬛ Board
+                <Grid size={16} />
+                Board
               </button>
             </div>
 
             <button 
               onClick={handleNewTask}
-              className="btn-primary flex items-center gap-2"
+              className="btn-primary group"
             >
-              <span className="text-lg leading-none">+</span>
+              <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
               New Task
             </button>
           </div>
@@ -193,10 +204,10 @@ function Dashboard() {
         </div>
 
         {/* Pagination — only in list mode */}
-        {!loading && viewMode === 'list' && (
+        {!loading && viewMode === 'list' && pagination && (
           <Pagination 
-            currentPage={pagination.page} 
-            totalPages={pagination.pages} 
+            currentPage={pagination.page || 1} 
+            totalPages={pagination.pages || 1} 
             onPageChange={handlePageChange} 
           />
         )}

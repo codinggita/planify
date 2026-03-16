@@ -101,8 +101,14 @@ Step 11 - feat: add drag and drop kanban board
 - Board view fetches all tasks (limit=100) for full Kanban visibility
 - Status: COMPLETED
 
-Step 12 - Productivity Streak System — coming next
-Step 13 - Task Notes
+Step 12 - feat: add productivity streak system
+- Added `streak` and `lastActive` fields to MongoDB User schema
+- Updated backend Authentication logic to calculate consecutive daily logins and automatically persist `streak`
+- Created `StreakBadge` component to display active fire streaks
+- Added the streak badge to the top Navbar explicitly for logged-in users
+- Status: COMPLETED
+
+Step 13 - Task Notes — coming next
 Step 14 - Activity History
 
 

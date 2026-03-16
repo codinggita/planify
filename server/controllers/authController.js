@@ -8,6 +8,36 @@ const generateToken = (id) => {
   })
 }
 
+// Logic to calculate productivity streak
+const calculateStreak = (user) => {
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  
+  if (!user.lastActive) {
+    user.streak = 1
+    user.lastActive = now
+    return
+  }
+
+  const lastActiveDate = new Date(user.lastActive)
+  const lastActiveMidnight = new Date(lastActiveDate.getFullYear(), lastActiveDate.getMonth(), lastActiveDate.getDate())
+  
+  // Calculate difference in whole days
+  const diffTime = Math.abs(today - lastActiveMidnight)
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+  if (diffDays === 1) {
+    // Was active yesterday, increment streak
+    user.streak += 1
+  } else if (diffDays > 1) {
+    // Missed a day, reset streak
+    user.streak = 1
+  }
+  // If diffDays === 0, they were already active today, streak remains the same
+
+  user.lastActive = now
+}
+
 // @desc    Register new user
 // @route   POST /api/auth/signup
 // @access  Public
@@ -31,6 +61,8 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password, // hashed in pre-save hook
+      streak: 1,
+      lastActive: new Date(),
     })
 
     if (user) {
@@ -39,6 +71,7 @@ export const registerUser = async (req, res) => {
           id: user._id,
           name: user.name,
           email: user.email,
+          streak: user.streak,
         },
         token: generateToken(user._id),
       })
@@ -61,11 +94,16 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email })
 
     if (user && (await user.matchPassword(password))) {
+      // Update streak
+      calculateStreak(user)
+      await user.save()
+
       res.json({
         user: {
           id: user._id,
           name: user.name,
           email: user.email,
+          streak: user.streak,
         },
         token: generateToken(user._id),
       })
@@ -82,12 +120,23 @@ export const loginUser = async (req, res) => {
 // @access  Private
 export const getMe = async (req, res) => {
   try {
-    const user = {
-      id: req.user._id,
-      email: req.user.email,
-      name: req.user.name,
+    // The user document is passed from authMiddleware, find it again to save updates
+    const user = await User.findById(req.user._id)
+    
+    if (user) {
+      calculateStreak(user)
+      await user.save()
+
+      const userData = {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        streak: user.streak,
+      }
+      res.status(200).json(userData)
+    } else {
+      res.status(404).json({ message: 'User not found' })
     }
-    res.status(200).json(user)
   } catch (error) {
     res.status(500).json({ message: error.message })
   }

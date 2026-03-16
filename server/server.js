@@ -4,6 +4,7 @@ import cors from 'cors'
 import connectDB from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
 import taskRoutes from './routes/taskRoutes.js'
+import activityRoutes from './routes/activityRoutes.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
 // Load env vars
@@ -24,6 +25,7 @@ app.use(cors())
 // Routes
 app.use('/api/auth', authRoutes)
 app.use('/api/tasks', taskRoutes)
+app.use('/api/activity', activityRoutes)
 
 // Custom error handler
 app.use(errorHandler)

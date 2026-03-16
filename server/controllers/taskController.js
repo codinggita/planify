@@ -1,4 +1,5 @@
 import Task from '../models/Task.js'
+import Activity from '../models/Activity.js'
 
 // @desc    Get all tasks for the logged in user (with search, filter, sort, pagination)
 // @route   GET /api/tasks
@@ -72,10 +73,18 @@ export const createTask = async (req, res) => {
       user: req.user.id,
       title,
       description,
+      notes,
       status,
       priority,
       dueDate,
       tags,
+    })
+
+    // Log Activity
+    await Activity.create({
+      user: req.user.id,
+      action: 'CREATED_TASK',
+      taskTitle: task.title,
     })
 
     res.status(201).json(task)
@@ -104,6 +113,23 @@ export const updateTask = async (req, res) => {
       new: true,
     })
 
+    // Log Activity if status changed
+    if (req.body.status && req.body.status !== task.status) {
+      if (req.body.status === 'Done') {
+        await Activity.create({
+          user: req.user.id,
+          action: 'COMPLETED_TASK',
+          taskTitle: task.title,
+        })
+      } else if (req.body.status === 'In Progress') {
+        await Activity.create({
+          user: req.user.id,
+          action: 'STARTED_TASK',
+          taskTitle: task.title,
+        })
+      }
+    }
+
     res.status(200).json(updatedTask)
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -127,6 +153,13 @@ export const deleteTask = async (req, res) => {
     }
 
     await task.deleteOne()
+
+    // Log Activity
+    await Activity.create({
+      user: req.user.id,
+      action: 'DELETED_TASK',
+      taskTitle: task.title, // Use original title, it's safe since it's already fetched
+    })
 
     res.status(200).json({ id: req.params.id })
   } catch (error) {

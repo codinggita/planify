@@ -115,7 +115,12 @@ Step 13 - feat: add task notes and edit mode
 - Wired up the "Edit" buttons on both the List view cards and the Kanban Board cards
 - Status: COMPLETED
 
-Step 14 - Activity History — coming next
+Step 14 - feat: add activity history feed
+- Created `Activity` MongoDB model and `/api/activity` Express routes to log actions
+- Intercepted Task creation, completion, and deletion events in `taskController.js` to automatically log activities
+- Designed and built the `<ActivityFeed />` vertical timeline UI component
+- Mounted `ActivityFeed` into the main `Dashboard.jsx` interface
+- Status: COMPLETED
 
 
 

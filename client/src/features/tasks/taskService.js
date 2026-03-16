@@ -42,3 +42,8 @@ export const getTaskStats = async () => {
   const response = await axios.get(API_URL + 'stats', getAuthHeaders())
   return response.data
 }
+
+export const getRecentActivity = async () => {
+  const response = await axios.get('/api/activity', getAuthHeaders())
+  return response.data
+}

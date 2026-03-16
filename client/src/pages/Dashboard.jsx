@@ -7,6 +7,7 @@ import { SortDropdown } from '../features/filters/SortDropdown'
 import { Pagination } from '../features/pagination/Pagination'
 import { ProgressTracker } from '../features/tasks/ProgressTracker'
 import { KanbanBoard } from '../features/tasks/KanbanBoard'
+import { ActivityFeed } from '../components/ActivityFeed'
 
 function Dashboard() {
   const { tasks, pagination, loading, error, fetchTasks, removeTask } = useTasks()
@@ -200,6 +201,9 @@ function Dashboard() {
           />
         )}
 
+        <div className="mt-12">
+          <ActivityFeed />
+        </div>
       </div>
     </div>
   )

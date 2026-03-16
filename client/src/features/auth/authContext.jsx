@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext } from 'react'
+import { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react'
 import * as authService from './authService'
 import toast from 'react-hot-toast'
 
@@ -12,8 +12,26 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [isInitializing, setIsInitializing] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  
+  const clearError = useCallback(() => setError(null), [])
+
+  const formatAuthError = (err) => {
+    if (err.response) {
+      const status = err.response.status
+      const msg = err.response.data?.message
+
+      if (status === 502 || status === 503) return 'Our server is temporarily unreachable. Please try again in a minute.'
+      if (status === 500) return 'Something went wrong on our end. We are looking into it.'
+      if (status === 401 && msg === 'Invalid email or password') return 'Incorrect email or password. Please try again.'
+      if (status === 400 && msg === 'User already exists') return 'This email is already registered. Try logging in instead!'
+      
+      return msg || 'Authentication failed'
+    }
+    return err.message || 'Unable to connect to the server'
+  }
 
   // On mount, check if there's a token and load user profile
   useEffect(() => {
@@ -28,13 +46,13 @@ export function AuthProvider({ children }) {
         console.error('Auth initialization failed:', err)
         localStorage.removeItem('planify-token')
       } finally {
-        setLoading(false)
+        setIsInitializing(false)
       }
     }
     initAuth()
   }, [])
 
-  const signup = async (userData) => {
+  const signup = useCallback(async (userData) => {
     setLoading(true)
     setError(null)
     try {
@@ -44,15 +62,16 @@ export function AuthProvider({ children }) {
       toast.success('Account created successfully!')
       return { success: true }
     } catch (err) {
-      setError(err.message || 'Signup failed')
-      toast.error(err.message || 'Signup failed')
-      return { success: false, error: err.message }
+      const msg = formatAuthError(err)
+      setError(msg)
+      toast.error(msg)
+      return { success: false, error: msg }
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const login = async (credentials) => {
+  const login = useCallback(async (credentials) => {
     setLoading(true)
     setError(null)
     try {
@@ -62,22 +81,35 @@ export function AuthProvider({ children }) {
       toast.success('Welcome back!')
       return { success: true }
     } catch (err) {
-      setError(err.message || 'Login failed')
-      toast.error(err.message || 'Login failed')
-      return { success: false, error: err.message }
+      const msg = formatAuthError(err)
+      setError(msg)
+      toast.error(msg)
+      return { success: false, error: msg }
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('planify-token')
     setUser(null)
-  }
+  }, [])
+
+  const value = useMemo(() => ({ 
+    user, 
+    loading, 
+    isInitializing, 
+    error, 
+    signup, 
+    login, 
+    logout, 
+    clearError,
+    setError 
+  }), [user, loading, isInitializing, error, signup, login, logout, clearError])
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, signup, login, logout, setError }}>
-      {!loading && children}
+    <AuthContext.Provider value={value}>
+      {!isInitializing && children}
     </AuthContext.Provider>
   )
 }

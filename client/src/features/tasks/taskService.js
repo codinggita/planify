@@ -43,6 +43,11 @@ export const getTaskStats = async () => {
   return response.data
 }
 
+export const getGlobalStats = async () => {
+  const response = await axios.get('/api/tasks/public/stats')
+  return response.data
+}
+
 export const getRecentActivity = async () => {
   const response = await axios.get('/api/activity', getAuthHeaders())
   return response.data

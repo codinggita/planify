@@ -135,20 +135,33 @@ function TaskFormModal({ isOpen, onClose, editingTask = null }) {
              </select>
              {errors.priority && <p className="text-red-500 text-xs mt-1">{errors.priority.message}</p>}
            </div>
-           <div>
-             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-               Status
-             </label>
-             <select
-               {...register('status')}
-               className="input bg-white dark:bg-gray-800"
-             >
-               <option value="Todo">Todo</option>
-               <option value="In Progress">In Progress</option>
-               <option value="Done">Done</option>
-             </select>
-             {errors.status && <p className="text-red-500 text-xs mt-1">{errors.status.message}</p>}
-           </div>
+           
+           {/* Status is only changeable when CREATING a task - Show as read-only badge when editing */}
+           {editingTask ? (
+             <div>
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                 Current Status
+               </label>
+               <div className="px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl text-sm font-bold text-violet-600 dark:text-violet-400">
+                 {editingTask.status}
+               </div>
+             </div>
+           ) : (
+             <div>
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                 Status
+               </label>
+               <select
+                 {...register('status')}
+                 className="input bg-white dark:bg-gray-800"
+               >
+                 <option value="Todo">Todo</option>
+                 <option value="In Progress">In Progress</option>
+                 <option value="Done">Done</option>
+               </select>
+               {errors.status && <p className="text-red-500 text-xs mt-1">{errors.status.message}</p>}
+             </div>
+           )}
          </div>
 
          <div className="pt-4 flex justify-end gap-3 mt-6 border-t border-gray-100 dark:border-gray-800">

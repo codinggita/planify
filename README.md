@@ -93,9 +93,22 @@ Step 10 - feat: add task progress tracking
 - Added ProgressTracker to `Dashboard`
 - Status: COMPLETED
 
-Step 11 - Drag and Drop Tasks — coming next
-Step 12 - Productivity Streak System
-Step 13 - Task Notes
+Step 11 - feat: add drag and drop kanban board
+- Installed `@hello-pangea/dnd` for drag and drop support
+- Added `updateTaskStatus` to `TaskContext` with optimistic UI updates (instant visual feedback, reverts on error)
+- Created `KanbanCard` (draggable task card) and `KanbanBoard` (3-column Droppable layout)
+- Added a List/Board view toggle to the Dashboard header
+- Board view fetches all tasks (limit=100) for full Kanban visibility
+- Status: COMPLETED
+
+Step 12 - feat: add productivity streak system
+- Added `streak` and `lastActive` fields to MongoDB User schema
+- Updated backend Authentication logic to calculate consecutive daily logins and automatically persist `streak`
+- Created `StreakBadge` component to display active fire streaks
+- Added the streak badge to the top Navbar explicitly for logged-in users
+- Status: COMPLETED
+
+Step 13 - Task Notes — coming next
 Step 14 - Activity History
 
 

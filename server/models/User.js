@@ -16,6 +16,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add a password'],
     },
+    streak: {
+      type: Number,
+      default: 0,
+    },
+    lastActive: {
+      type: Date,
+    },
   },
   {
     timestamps: true,

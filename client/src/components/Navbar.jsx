@@ -1,6 +1,7 @@
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import ThemeToggle from '../features/theme/ThemeToggle'
 import { useAuth } from '../features/auth/authContext'
+import { StreakBadge } from './StreakBadge'
 
 const NAV_LINKS = [
   { to: '/',          label: 'Home'      },
@@ -52,6 +53,7 @@ function Navbar() {
           
           {user ? (
             <div className="flex items-center gap-3 pl-2 border-l border-gray-200 dark:border-gray-700">
+              <StreakBadge />
               <Link to="/profile" className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 font-bold text-sm" title="Profile">
                 {user.name.charAt(0).toUpperCase()}
               </Link>

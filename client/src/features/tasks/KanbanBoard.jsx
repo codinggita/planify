@@ -22,7 +22,7 @@ const COLUMN_STYLES = {
   },
 }
 
-export function KanbanBoard({ tasks }) {
+export function KanbanBoard({ tasks, onEditClick }) {
   const { updateTaskStatus } = useTasks()
 
   const getTasksByStatus = (status) =>
@@ -82,7 +82,7 @@ export function KanbanBoard({ tasks }) {
                       </div>
                     ) : (
                       columnTasks.map((task, index) => (
-                        <KanbanCard key={task._id} task={task} index={index} />
+                        <KanbanCard key={task._id} task={task} index={index} onEditClick={onEditClick} />
                       ))
                     )}
                     {provided.placeholder}

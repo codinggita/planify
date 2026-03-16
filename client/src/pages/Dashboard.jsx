@@ -12,6 +12,7 @@ function Dashboard() {
   const { tasks, pagination, loading, error, fetchTasks, removeTask } = useTasks()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState('list') // 'list' | 'board'
+  const [editingTask, setEditingTask] = useState(null)
 
   // State for all query parameters including pagination
   const [filters, setFilters] = useState({
@@ -46,6 +47,16 @@ function Dashboard() {
 
   const handlePageChange = (newPage) => {
     setFilters(prev => ({ ...prev, pageNumber: newPage }))
+  }
+
+  const handleNewTask = () => {
+    setEditingTask(null)
+    setIsModalOpen(true)
+  }
+
+  const handleEditClick = (task) => {
+    setEditingTask(task)
+    setIsModalOpen(true)
   }
 
   return (
@@ -87,7 +98,7 @@ function Dashboard() {
             </div>
 
             <button 
-              onClick={() => setIsModalOpen(true)}
+              onClick={handleNewTask}
               className="btn-primary flex items-center gap-2"
             >
               <span className="text-lg leading-none">+</span>
@@ -110,7 +121,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <TaskFormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <TaskFormModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          editingTask={editingTask}
+        />
 
         {/* Content Area */}
         <div className="flex-1">
@@ -128,7 +143,7 @@ function Dashboard() {
               Failed to load tasks: {error}
             </div>
           ) : viewMode === 'board' ? (
-            <KanbanBoard tasks={tasks} />
+            <KanbanBoard tasks={tasks} onEditClick={handleEditClick} />
           ) : tasks.length === 0 ? (
             <div className="text-center py-20 px-4 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800">
               <span className="text-4xl block mb-4">🎯</span>
@@ -166,7 +181,7 @@ function Dashboard() {
                     </span>
                     
                     <div className="flex gap-2">
-                      <button className="text-sm font-medium text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Edit</button>
+                      <button onClick={() => handleEditClick(task)} className="text-sm font-medium text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Edit</button>
                       <button onClick={() => removeTask(task._id)} className="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Del</button>
                     </div>
                   </div>

@@ -1,7 +1,7 @@
 import { Draggable } from '@hello-pangea/dnd'
 import { useTasks } from './taskContext'
 
-export function KanbanCard({ task, index }) {
+export function KanbanCard({ task, index, onEditClick }) {
   const { removeTask } = useTasks()
 
   return (
@@ -39,7 +39,12 @@ export function KanbanCard({ task, index }) {
               {new Date(task.createdAt).toLocaleDateString()}
             </span>
             <div className="flex gap-2">
-              {/* Optional edit button, but keeping it minimal for kanban */}
+              <button 
+                onClick={() => onEditClick(task)} 
+                className="text-xs font-medium text-gray-400 hover:text-violet-500 transition-colors pointer-events-auto"
+              >
+                Edit
+              </button>
               <button 
                 onClick={() => removeTask(task._id)} 
                 className="text-xs font-medium text-gray-400 hover:text-red-500 transition-colors pointer-events-auto"

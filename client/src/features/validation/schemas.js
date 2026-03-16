@@ -14,6 +14,7 @@ export const signupSchema = z.object({
 export const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title is too long'),
   description: z.string().max(500, 'Description is too long').optional(),
+  notes: z.string().max(2000, 'Notes are too long').optional(),
   status: z.enum(['Todo', 'In Progress', 'Done']),
   priority: z.enum(['Low', 'Medium', 'High']),
   // dueDate is optional, but if provided should be a valid string date

@@ -108,8 +108,14 @@ Step 12 - feat: add productivity streak system
 - Added the streak badge to the top Navbar explicitly for logged-in users
 - Status: COMPLETED
 
-Step 13 - Task Notes — coming next
-Step 14 - Activity History
+Step 13 - feat: add task notes and edit mode
+- Added `notes` string to MongoDB Task schema
+- Refactored `TaskFormModal` to conditionally act as an "Edit Task" modal
+- Populated `TaskFormModal` default values with existing task data if being edited
+- Wired up the "Edit" buttons on both the List view cards and the Kanban Board cards
+- Status: COMPLETED
+
+Step 14 - Activity History — coming next
 
 
 

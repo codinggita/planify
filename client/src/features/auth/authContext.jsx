@@ -30,6 +30,12 @@ export function AuthProvider({ children }) {
       
       return msg || 'Authentication failed'
     }
+    
+    // Check if it's a network error (no response)
+    if (err.request) {
+      return 'Unable to reach the server. Please check your internet or the API URL configuration.'
+    }
+    
     return err.message || 'Unable to connect to the server'
   }
 

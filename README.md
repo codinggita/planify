@@ -135,6 +135,13 @@ Step 16 - feat: refine task logic and auth error handling
 - Automated error clearing during navigation between login and signup
 - Status: COMPLETED
 
+Step 17 - feat: secure deployment and cross-platform connectivity
+- Configured dynamic CORS security in `server.js` using `ALLOWED_ORIGINS`
+- Created Netlify `_redirects` for production API proxying to Render
+- Verified live connectivity between Netlify frontend and Render backend
+- Updated `.env.example` with full production environment requirements
+- Status: COMPLETED
+
 
 
 User Authentication (Signup & Login)
